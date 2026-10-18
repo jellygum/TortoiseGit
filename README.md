@@ -58,6 +58,13 @@ How to build
 
 Building TortoiseGit is usually not necessary; however, it is easy. All necessary requirements and steps are described in the [build.txt](build.txt) file. Our short description in the [architecture.txt](architecture.txt) file might also be helpful.
 
+macOS / Qt port design
+----------------------
+
+A proposed Qt Widgets architecture, feature inventory, and migration milestones
+are described in the [macOS / Qt port design](doc/design/macos-qt-port.md) (Korean).
+This is a design document; a macOS build target is not yet available.
+
 License
 =======
 
