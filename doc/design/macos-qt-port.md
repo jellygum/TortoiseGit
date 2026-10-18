@@ -2,9 +2,21 @@
 
 작성일: 2026-10-18. 조사 기준: `7338078f8`.
 
-상태: **전체 기능 이식을 위한 설계 초안**. 이 변경은 설계 문서만 추가한다.
-macOS 실행 파일, Qt 빌드 대상, 실행 검증은 아직 제공하지 않는다.
+상태: **전체 기능 이식을 위한 설계와 초기 Qt 구현**.
+Qt 빌드 대상과 macOS 앱의 첫 구현을 추가했다. 현재 지원 기능과 빌드 절차는
+[Qt 구현 안내](../qt/README.md)를 참조한다. 전체 기능 이식은 진행 중이다.
 사용자 결정은 Qt 기반 UI, 전체 기능의 이식 범위 설계, `qt` 브랜치에서의 작업이다.
+
+### 초기 구현 현황
+
+- Qt 6.11.3 / CMake / Ninja, C++20, 배포 대상 macOS 14.4로 구성했다.
+- `src/portable/domain`의 상태 파서와 `src/portable/adapters`의 비동기 Git CLI 계층을
+  `src/qt`의 Qt Widgets UI에서 사용한다. 원본 Windows 코드를 직접 링크하지 않는다.
+- P1의 저장소 열기/생성, 상태/diff, 파일 staging/unstaging, commit 수직 기능을 구현했다.
+  P2의 원격/branch/history와 P3–P4 일부 작업의 UI도 제공하지만, 전체 옵션 동등성은 미완료다.
+- 임시 저장소와 로컬 bare remote의 Git 통합 테스트 및 Qt 위젯 조작 테스트를 제공한다.
+- P0의 ARM 실기/Finder/기존 merge engine 추출 검증, P5 Finder 제품 통합,
+  P6 배포 검증은 아직 완료되지 않았다. 초기 앱 실행을 전체 이식 완료로 취급하지 않는다.
 
 ## 1. 목표와 완료의 정의
 
@@ -81,7 +93,8 @@ Intel과 ARM, universal 빌드, 앱 번들 배포를 설명한다. 선택한 버
 
 ## 4. 모듈 구조와 실행 경계
 
-아래 이름과 경로는 제안이며 아직 생성된 target이 아니다.
+아래 구조가 목표다. 초기 구현은 `tgit_domain`, `tgit_git`, `tgit_ui`,
+`TortoiseGitQt`, `TortoiseGitAskPass` target으로 구성하며, native 서비스/확장은 후속 작업이다.
 
 ```text
 Qt Widgets 앱 / CLI 자동화
@@ -293,9 +306,9 @@ P0 이후 화면별 이식량과 dependency spike 결과를 근거로 단계별 
 
 ## 10. 빌드와 배포 설계
 
-개발 빌드는 CMake configure/build/test/install을 한 스크립트로 제공하고, 별도 output
-디렉터리에 `.app`을 만든다. P1에서 실제 명령, 사전 설치 항목, 실패 시 조치와 앱 경로를
-README에 추가한다. 아직 존재하지 않는 빌드 명령을 현재 사용 가능한 절차로 안내하지 않는다.
+개발 빌드는 `scripts/qt/build-macos.sh`로 CMake configure/build/test/install을 실행하고,
+`build-qt` / `dist-qt` 디렉터리에 `.app`을 만든다. 실제 명령과 사전 설치 항목,
+앱 경로는 [Qt 구현 안내](../qt/README.md)에 있다.
 CI는 Intel/ARM 실행 job, portable/Qt 테스트, Windows 기존 빌드를 포함하도록 확장한다.
 
 배포는 우선 Mac App Store 외부의 `.app`/DMG로 설계한다. Qt frameworks/plugins와 native

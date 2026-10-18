@@ -38,3 +38,7 @@ Thumbs.db
 bin
 obj
 enc_temp_folder
+/.tools
+/build-qt
+/dist-qt
+/aqtinstall.log
